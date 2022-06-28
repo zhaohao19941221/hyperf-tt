@@ -6,7 +6,7 @@
 ```shell
 php bin/hyperf.php model:refresh --help
 ```
-2. swagger 文档生成 php 
+2. swagger 文档生成使用```hyperf/swagger``
 ```shell
 php bin/hyperf.php swagger:format --help
 ```
