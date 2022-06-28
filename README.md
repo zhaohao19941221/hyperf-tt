@@ -6,9 +6,10 @@
 ```shell
 php bin/hyperf.php model:refresh --help
 ```
-2. swagger 文档生成使用```hyperf/swagger``
+2. 一条命令根据响应体和请求方式生成swagger文档；生成使用```hyperf/swagger``
 ```shell
 php bin/hyperf.php swagger:format --help
+php bin/hyperf.php swagger:format Post \'{"errcode":0,"errmsg":"success","data":{"token":"666"}}\'
 ```
 3. 多文件多目录多前缀(router)
 4. 多应用bundle区分
