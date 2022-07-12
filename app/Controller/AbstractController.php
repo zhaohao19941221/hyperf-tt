@@ -9,7 +9,6 @@ declare(strict_types=1);
  */
 namespace App\Controller;
 
-use App\Exception\FrontException;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Psr\Container\ContainerInterface;
@@ -33,30 +32,4 @@ abstract class AbstractController
      * @var Response
      */
     protected $response;
-
-    /**
-     * 获取分区ie.
-     * @return mixed
-     */
-    protected function getZoneId()
-    {
-        $zoneId = $this->request->getAttribute('zoneid');
-        if (empty($zoneId)) {
-            throw new FrontException(123);
-        }
-        return $zoneId;
-    }
-
-    /**
-     * 获取玩家id.
-     * @return mixed
-     */
-    protected function getRoleId()
-    {
-        $roleId = $this->request->getAttribute('roleid');
-        if (empty($roleId)) {
-            throw new FrontException(123);
-        }
-        return $roleId;
-    }
 }

@@ -28,7 +28,8 @@
         "hyperf/process": "2.2.*",
         "hyperf/swagger": "2.2.*",
         "hyperf/task": "^2.2",
-        "hyperf/validation": "^2.2"
+        "hyperf/validation": "^2.2",
+        "qbhy/hyperf-multi-env": "^2.1"
     },
     "require-dev": {
         "swoole/ide-helper": "^4.5",

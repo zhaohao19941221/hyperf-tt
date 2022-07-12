@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "696a2c4792e88e98a9ecd1a2496e4560",
+    "content-hash": "72ed79b88e96a4ca60c793c507339cf2",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -3868,6 +3868,63 @@
                 "source": "https://github.com/php-fig/simple-cache/tree/master"
             },
             "time": "2017-10-23T01:57:42+00:00"
+        },
+        {
+            "name": "qbhy/hyperf-multi-env",
+            "version": "v2.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/qbhy/hyperf-multi-env.git",
+                "reference": "fd93c3f8391996a7a117ea65e5e6870d0d60cae6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/qbhy/hyperf-multi-env/zipball/fd93c3f8391996a7a117ea65e5e6870d0d60cae6",
+                "reference": "fd93c3f8391996a7a117ea65e5e6870d0d60cae6",
+                "shasum": "",
+                "mirrors": [
+                    {
+                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
+                        "preferred": true
+                    }
+                ]
+            },
+            "require": {
+                "ext-swoole": ">=4.4",
+                "php": ">=7.2"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^2.14",
+                "hyperf/config": "^2.1",
+                "hyperf/di": "^2.1",
+                "hyperf/testing": "^2.1",
+                "phpstan/phpstan": "^0",
+                "vlucas/phpdotenv": "^5.0"
+            },
+            "type": "library",
+            "extra": {
+                "hyperf": {
+                    "config": "Qbhy\\HyperfMultiEnv\\ConfigProvider"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Qbhy\\HyperfMultiEnv\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "keywords": [
+                "hyperf",
+                "php"
+            ],
+            "support": {
+                "issues": "https://github.com/qbhy/hyperf-multi-env/issues",
+                "source": "https://github.com/qbhy/hyperf-multi-env/tree/v2.1.1"
+            },
+            "time": "2021-02-25T01:24:58+00:00"
         },
         {
             "name": "ralouphie/getallheaders",
@@ -9155,5 +9212,5 @@
         "ext-openssl": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.2.0"
+    "plugin-api-version": "2.3.0"
 }
