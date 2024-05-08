@@ -6,7 +6,10 @@ declare(strict_types=1);
  *
  * @link     https://github.com/zhaohao19941221/hyperf-tt
  * @document https://github.com/zhaohao19941221/hyperf-tt.git
+ *
+ *
  */
+
 namespace App\Exception\Handler;
 
 use Hyperf\Contract\StdoutLoggerInterface;
@@ -17,14 +20,8 @@ use Throwable;
 
 class AppExceptionHandler extends ExceptionHandler
 {
-    /**
-     * @var StdoutLoggerInterface
-     */
-    protected $logger;
-
-    public function __construct(StdoutLoggerInterface $logger)
+    public function __construct(protected StdoutLoggerInterface $logger)
     {
-        $this->logger = $logger;
     }
 
     public function handle(Throwable $throwable, ResponseInterface $response)

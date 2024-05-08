@@ -6,30 +6,29 @@ declare(strict_types=1);
  *
  * @link     https://github.com/zhaohao19941221/hyperf-tt
  * @document https://github.com/zhaohao19941221/hyperf-tt.git
+ *
+ *
  */
+
 namespace App\Command;
 
 use Hyperf\Command\Annotation\Command;
 use Hyperf\Command\Command as HyperfCommand;
 use Psr\Container\ContainerInterface;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 
-/**
- * 刷新model属性.
- * @Command
- */
+#[Command]
 class ModelRefreshCommand extends HyperfCommand
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected ContainerInterface $container;
 
     /**
      * 执行的命令行.
      *
-     * @var string
+     * @var ?string
      */
-    protected $name = 'model:refresh';
+    protected ?string $name = 'model:refresh';
 
     public function __construct(ContainerInterface $container)
     {
@@ -37,18 +36,27 @@ class ModelRefreshCommand extends HyperfCommand
         parent::__construct();
     }
 
-    public function configure()
+    /**
+     * @Created By: zhaohao
+     * @Created At: 2024/5/7 下午3:41
+     * @Desc:configure
+     */
+    public function configure(): void
     {
         parent::configure();
         $this->setDescription('刷新model属性');
     }
 
-    public function handle()
+    /**
+     * @Created By: zhaohao
+     * @Created At: 2024/5/7 下午3:41
+     * @Desc:handle
+     */
+    public function handle(): void
     {
         $this->handleDirectoryFile(function ($pathName) {
             $pathInfo = pathinfo($pathName);
-            $entity = str_replace('/', '\\', sprintf('%s%s%s', $pathInfo['dirname'], '/', $pathInfo['filename']));
-            $entity = str_replace('app', '', $entity);
+            $entity = str_replace(['/', 'app'], ['\\', ''], sprintf('%s%s%s', $pathInfo['dirname'], '/', $pathInfo['filename']));
             if (class_exists($entity)) {
                 $model = new $entity();
                 $this->info($model->getModel()->getTable() . 'model开始刷新');
@@ -69,12 +77,12 @@ class ModelRefreshCommand extends HyperfCommand
      */
     public function handleDirectoryFile(callable $callback, string $baseDir = 'app', string $needle = ''): void
     {
-        $model = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($baseDir));
-        foreach ($model as $key => $val) {
+        $model = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($baseDir));
+        foreach ($model as $val) {
             if (! is_file($val->getPathName())) {
                 continue;
             }
-            if (((! $needle) || (strpos($val->getPathName(), $needle) !== false)) && $callback) {
+            if (((! $needle) || str_contains($val->getPathName(), $needle)) && $callback) {
                 $callback($val->getPathName());
             }
         }

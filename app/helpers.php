@@ -6,18 +6,30 @@ declare(strict_types=1);
  *
  * @link     https://github.com/zhaohao19941221/hyperf-tt
  * @document https://github.com/zhaohao19941221/hyperf-tt.git
+ *
+ *
  */
+use Hyperf\Cache\CacheManager;
+use Hyperf\Cache\Driver\DriverInterface;
+use Hyperf\Context\ApplicationContext;
+use Hyperf\Database\Model\Builder;
 use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
 use Hyperf\Logger\LoggerFactory;
-use Hyperf\Utils\ApplicationContext;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 if (! function_exists('di')) {
     /**
-     * 获取Container.
-     * @param null $id
-     * @return mixed|\Psr\Container\ContainerInterface
+     * @Created By: zhaohao
+     * @Created At: 2024/5/7 上午10:39
+     * @Desc:获取Container
+     * @param null|mixed $id
+     * @return ContainerInterface|mixed
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
-    function di($id = null)
+    function di($id = null): mixed
     {
         $container = ApplicationContext::getContainer();
         if ($id) {
@@ -29,46 +41,39 @@ if (! function_exists('di')) {
 
 if (! function_exists('logger')) {
     /**
-     * 文件日志.
-     * @param string $name
-     * @param string $group
-     * @return \Psr\Log\LoggerInterface
+     * @Created By: zhaohao
+     * @Created At: 2024/5/7 上午10:39
+     * @Desc:文件日志
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
-    function logger($name = 'hyperf', $group = 'default')
+    function logger(string $name = 'hyperf', string $group = 'default'): mixed
     {
         return di()->get(LoggerFactory::class)->get($name, $group);
     }
 }
 
-if (! function_exists('is_true')) {
-    /**
-     * 将字符串中的bool转为布尔.
-     * @param $val
-     * @param bool $return_null
-     * @return bool
-     */
-    function is_true($val, $return_null = false)
-    {
-        $boolVal = (is_string($val) ? filter_var($val, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) : (bool) $val);
-        return $boolVal === null && ! $return_null ? false : $boolVal;
-    }
-}
-
 if (! function_exists('cache')) {
     /**
-     * 缓存实例 简单的缓存.
-     * @param string $name
-     * @return \Hyperf\Cache\Driver\DriverInterface
+     * @Created By: zhaohao
+     * @Created At: 2024/5/7 上午10:40
+     * @Desc:缓存实例 简单的缓存.
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
-    function cache($name = 'default')
+    function cache(string $name = 'default'): DriverInterface
     {
-        return di()->get(Hyperf\Cache\CacheManager::class)->getDriver($name);
+        return di()->get(CacheManager::class)->getDriver($name);
     }
 }
 
 if (! function_exists('format_throwable')) {
     /**
-     * 格式化错误异常.
+     * @Created By: zhaohao
+     * @Created At: 2024/5/7 上午10:40
+     * @Desc:格式化错误异常
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     function format_throwable(Throwable $throwable): string
     {
@@ -76,62 +81,24 @@ if (! function_exists('format_throwable')) {
     }
 }
 
-if (! function_exists('replaceSpecialChar')) {
-    /**
-     * 去掉特殊字符.
-     * @param $strParam
-     * @return null|string|string[]
-     */
-    function replaceSpecialChar($strParam)
-    {
-        $regex = "/\\/|\\~|\\!|\\@|\\#|\\$|\\%|\\^|\\&|\\*|\\(|\\)|\\_|\\+|\\{|\\}|\\:|\\<|\\>|\\?|\\[|\\]|\\,|\\.|\\/|\\;|\\'|\\`|\\-|\\=|\\\\|\\|/";
-        return preg_replace($regex, '', $strParam);
-    }
-}
-
-if (! function_exists('getSignContent')) {
-    /**
-     * 拼接uri 用于验签等功能.
-     * @param $params
-     * @return string
-     */
-    function getSignContent($params)
-    {
-        ksort($params);
-        $i = 0;
-        $stringToBeSigned = '';
-        foreach ($params as $k => $v) {
-            if ($i == 0) {
-                $stringToBeSigned .= "{$k}" . '=' . "{$v}";
-            } else {
-                $stringToBeSigned .= '&' . "{$k}" . '=' . "{$v}";
-            }
-            ++$i;
-        }
-        unset($k, $v);
-        return $stringToBeSigned;
-    }
-}
-
 if (! function_exists('storage_path')) {
     /**
      * Get the path to the storage folder.
-     * @param string $path
-     * @return string
      */
-    function storage_path($path = '')
+    function storage_path(string $path = ''): string
     {
         return BASE_PATH . '/storage/' . $path;
     }
 }
 
-if (! function_exists('queryFilter')) {
+if (! function_exists('query_filter')) {
     /**
-     * 构造查询条件.
-     * @param $qb
-     * @return mixed
+     * @Created By: zhaohao
+     * @Created At: 2024/5/7 上午10:42
+     * @Desc:构造查询条件
+     * @param mixed $qb
      */
-    function queryFilter(array $filter, $qb): Hyperf\Database\Model\Builder
+    function query_filter(array $filter, $qb): Builder
     {
         if ($filter) {
             $operators = [
@@ -182,19 +149,19 @@ if (! function_exists('queryFilter')) {
                         break;
                     case 'or':
                         $qb = $qb->where(function ($qb) use ($value) {
-                            queryFilterOr($value, $qb);
+                            query_filter_or($value, $qb);
                         });
                         break;
                     case 'orAnd':
-                        $qb = queryFilter($value, $qb);
+                        $qb = query_filter($value, $qb);
                         break;
                     case 'ors':
                         $qb = $qb->where(function ($qb) use ($value) {
-                            queryBuilderOr($value, $qb);
+                            query_builder_or($value, $qb);
                         });
                         break;
                     case 'orsAnd':
-                        $qb = queryBuilder($value, $qb);
+                        $qb = query_builder($value, $qb);
                         break;
                     default:
                         if (is_array($value)) {
@@ -209,13 +176,14 @@ if (! function_exists('queryFilter')) {
     }
 }
 
-if (! function_exists('queryFilterOr')) {
+if (! function_exists('query_filter_or')) {
     /**
-     * 构造查询条件.
-     * @param $qb
-     * @return mixed
+     * @Created By: zhaohao
+     * @Created At: 2024/5/7 上午10:42
+     * @Desc:构造查询条件
+     * @param mixed $qb
      */
-    function queryFilterOr(array $filter, $qb): Hyperf\Database\Model\Builder
+    function query_filter_or(array $filter, $qb): Builder
     {
         if ($filter) {
             $operators = [
@@ -265,19 +233,19 @@ if (! function_exists('queryFilterOr')) {
                         $qb = $qb->orWhereNull($column);
                         break;
                     case 'or':
-                        $qb = queryFilterOr($value, $qb);
+                        $qb = query_filter_or($value, $qb);
                         break;
                     case 'orAnd':
                         $qb = $qb->orWhere(function ($qb) use ($value) {
-                            queryFilter($value, $qb);
+                            query_filter($value, $qb);
                         });
                         break;
                     case 'ors':
-                        $qb = queryBuilderOr($value, $qb);
+                        $qb = query_builder_or($value, $qb);
                         break;
                     case 'orsAnd':
                         $qb = $qb->where(function ($qb) use ($value) {
-                            queryBuilder($value, $qb);
+                            query_builder($value, $qb);
                         });
                         break;
                     default:
@@ -293,19 +261,18 @@ if (! function_exists('queryFilterOr')) {
     }
 }
 
-if (! function_exists('queryBuilder')) {
+if (! function_exists('query_builder')) {
     /**
      * 构造复杂查询条件.
      * @param array $where [['filter' => 'value]]
-     * @param $qb
-     * @return mixed
+     * @param mixed $qb
      */
-    function queryBuilder(array $where, $qb)
+    function query_builder(array $where, $qb): mixed
     {
         if ($where) {
             foreach ($where as $filter) {
                 $qb = $qb->where(function ($qb) use ($filter) {
-                    queryFilter($filter, $qb);
+                    query_filter($filter, $qb);
                 });
             }
         }
@@ -313,19 +280,18 @@ if (! function_exists('queryBuilder')) {
     }
 }
 
-if (! function_exists('queryBuilderOr')) {
+if (! function_exists('query_builder_or')) {
     /**
      * 构造复杂查询条件.
      * @param array $where [['filter' => 'value]]
-     * @param $qb
-     * @return mixed
+     * @param mixed $qb
      */
-    function queryBuilderOr(array $where, $qb)
+    function query_builder_or(array $where, $qb): mixed
     {
         if ($where) {
             foreach ($where as $filter) {
                 $qb = $qb->orWhere(function ($qb) use ($filter) {
-                    queryFilterOr($filter, $qb);
+                    query_filter_or($filter, $qb);
                 });
             }
         }
@@ -333,20 +299,22 @@ if (! function_exists('queryBuilderOr')) {
     }
 }
 
-if (! function_exists('reloadRoute')) {
+if (! function_exists('reload_route')) {
     /**
-     * 加载路由.
+     * @Created By: zhaohao
+     * @Created At: 2024/5/7 上午10:44
+     * @Desc:加载路由
      */
-    function reloadRoute()
+    function reload_route(): void
     {
         $path = BASE_PATH . '/routes';
         $dirs = scandir($path);
         foreach ($dirs as $dir) {
-            if ($dir != '.' && $dir != '..') {
+            if ($dir !== '.' && $dir !== '..') {
                 $routeFilePath = $path . "/{$dir}";
                 $files = scandir($routeFilePath);
                 foreach ($files as $file) {
-                    if ($file != '.' && $file != '..') {
+                    if ($file !== '.' && $file !== '..') {
                         require_once $routeFilePath . '/' . basename($file);
                     }
                 }

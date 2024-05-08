@@ -6,30 +6,25 @@ declare(strict_types=1);
  *
  * @link     https://github.com/zhaohao19941221/hyperf-tt
  * @document https://github.com/zhaohao19941221/hyperf-tt.git
+ *
+ *
  */
+
 namespace App\Controller;
 
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Contract\RequestInterface;
+use Hyperf\HttpServer\Contract\ResponseInterface;
 use Psr\Container\ContainerInterface;
 
 abstract class AbstractController
 {
-    /**
-     * @Inject
-     * @var ContainerInterface
-     */
-    protected $container;
+    #[Inject]
+    protected ContainerInterface $container;
 
-    /**
-     * @Inject
-     * @var RequestInterface
-     */
-    protected $request;
+    #[Inject]
+    protected RequestInterface $request;
 
-    /**
-     * @Inject
-     * @var Response
-     */
-    protected $response;
+    #[Inject]
+    protected ResponseInterface $response;
 }

@@ -1,13 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
+use PhpCsFixer\Config;
+use PhpCsFixer\Finder;
 $header = <<<'EOF'
 This file is part of hyperf-tt.
 
 @link     https://github.com/zhaohao19941221/hyperf-tt
 @document https://github.com/zhaohao19941221/hyperf-tt.git
+
+
 EOF;
 
-return (new PhpCsFixer\Config())
+return (new Config())
     ->setRiskyAllowed(true)
     ->setRules([
         '@PSR2' => true,
@@ -21,13 +27,18 @@ return (new PhpCsFixer\Config())
             'location' => 'after_declare_strict',
         ],
         'array_syntax' => [
-            'syntax' => 'short'
+            'syntax' => 'short',
         ],
         'list_syntax' => [
-            'syntax' => 'short'
+            'syntax' => 'short',
         ],
         'concat_space' => [
-            'spacing' => 'one'
+            'spacing' => 'one',
+        ],
+        'global_namespace_import' => [
+            'import_classes' => true,
+            'import_constants' => true,
+            'import_functions' => null,
         ],
         'blank_line_before_statement' => [
             'statements' => [
@@ -36,7 +47,7 @@ return (new PhpCsFixer\Config())
         ],
         'general_phpdoc_annotation_remove' => [
             'annotations' => [
-                'author'
+                'author',
             ],
         ],
         'ordered_imports' => [
@@ -78,9 +89,10 @@ return (new PhpCsFixer\Config())
         'single_quote' => true,
         'standardize_not_equals' => true,
         'multiline_comment_opening_closing' => true,
+        'single_line_empty_body' => false,
     ])
     ->setFinder(
-        PhpCsFixer\Finder::create()
+        Finder::create()
             ->exclude('public')
             ->exclude('runtime')
             ->exclude('vendor')

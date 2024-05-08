@@ -1,5 +1,5 @@
 ## hyperf-tt
-基于hyperf框架v2.2.0+改造，支持多应用，多环境自动切换env配置,Repository，swagger 文档生成,刷新model属性,多文件多目录多前缀。需要的可以下载看看
+基于hyperf框架v3.1.0+改造，支持多应用，多环境自动切换env配置,Repository，swagger 文档生成,刷新model属性,多文件多目录多前缀。
 
 ## 额外支持功能
 1. 刷新model属性
@@ -17,7 +17,7 @@ php bin/hyperf.php swagger:format Post \'{"errcode":0,"errmsg":"success","data":
 ```shell
 composer check
 ```
-6. 多环境动态切换env配置，使用```qbhy/hyperf-multi-env```组件。
+6. 多环境动态切换env配置。
 
 # 多环境动态切换env配置
 只需要启动的时候设置 APP_ENV 配置，扩展包就会自动根据 env 来查找 env 文件配置。
@@ -25,10 +25,10 @@ composer check
 - .env.testing 没有的配置，还是会使用 .env 文件的配置来加载。所以建议 .env 放共有的配置。
 - 示例 - examples
 - 通过 .env 配置
-```APP_ENV=local```
+  ```APP_ENV=local```
 - 命令行直接启动
-```$ export APP_ENV=production && php bin/hyperf.php start```
-有环境变量污染的可能性，请小心使用
+  ```$ export APP_ENV=production && php bin/hyperf.php start```
+  有环境变量污染的可能性，请小心使用
 - docker 启动
 ```
 $ docker run --env APP_ENV=production -d -p 9501:9501 your-image
@@ -46,9 +46,9 @@ $ docker run --env APP_ENV=production -d -p 9501:9501 your-image
 
 # 注
 - 改造过程
-https://www.zhaohaoblog.com/?s=hyperf
-- 配合hyperf_docker_compose_autoconf
-https://github.com/zhaohao19941221/hyperf_docker_compose_autoconf.git
+  https://www.zhaohaoblog.com/?s=hyperf
+- 配合hyperf_docker_compose_autoconf开发环境
+  https://github.com/zhaohao19941221/hyperf_docker_compose_autoconf.git
 
 # 一条命令根据响应体生成生成swagger文档
 ![一条命令根据响应体生成生成swagger文档](https://cdn.learnku.com/uploads/images/202206/28/57474/A1m2Qlvx4a.png!large)
@@ -229,6 +229,7 @@ php bin/hyperf.php gen:migration create_users_table --table=表名
 * 所有缓存的`cache key` 必须在对应配置文件中配置
 
 ## 参数的类型以及返回值的类型例子
+
 ```php
 <?php
 
@@ -239,7 +240,7 @@ declare(strict_types=1);
  * @link     https://github.com/zhaohao19941221/hyperf-tt
  * @document https://github.com/zhaohao19941221/hyperf-tt.git
  */
-use App\Constants;
+use ProductBundle\Constants;
 /**
  * 测试
  * Class DevelopTest

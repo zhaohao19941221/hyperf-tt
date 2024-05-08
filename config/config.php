@@ -6,18 +6,23 @@ declare(strict_types=1);
  *
  * @link     https://github.com/zhaohao19941221/hyperf-tt
  * @document https://github.com/zhaohao19941221/hyperf-tt.git
+ *
+ *
  */
 use Hyperf\Contract\StdoutLoggerInterface;
 use Psr\Log\LogLevel;
 use Symfony\Component\Finder\Finder;
 
-$env = env('APP_ENV', 'indev');
-if ($env === 'indev') {
-    $configPath = [BASE_PATH . '/config/indev'];
-} elseif ($env === 'dev') {
+use function Hyperf\Support\env;
+
+$env = env('APP_ENV', 'product');
+
+if ($env === 'dev') {
     $configPath = [BASE_PATH . '/config/dev'];
+} elseif ($env === 'test') {
+    $configPath = [BASE_PATH . '/config/test'];
 } else {
-    $configPath = [BASE_PATH . '/config/production'];
+    $configPath = [BASE_PATH . '/config/product'];
 }
 
 $finder = new Finder();
@@ -26,9 +31,9 @@ $configs = [];
 foreach ($finder as $file) {
     $configs[$file->getBasename('.php')] = require $file->getRealPath();
 }
+
 return array_merge_recursive([
     'app_name' => env('APP_NAME', 'skeleton'),
-    'app_env' => $env,
     'scan_cacheable' => env('SCAN_CACHEABLE', false),
     StdoutLoggerInterface::class => [
         'log_level' => [

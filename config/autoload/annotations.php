@@ -6,12 +6,13 @@ declare(strict_types=1);
  *
  * @link     https://github.com/zhaohao19941221/hyperf-tt
  * @document https://github.com/zhaohao19941221/hyperf-tt.git
+ *
+ *
  */
 return [
     'scan' => [
         'paths' => [
             BASE_PATH . '/app',
-            BASE_PATH . '/src',
         ],
         'ignore_annotations' => [
             'mixin',

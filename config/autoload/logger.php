@@ -6,20 +6,34 @@ declare(strict_types=1);
  *
  * @link     https://github.com/zhaohao19941221/hyperf-tt
  * @document https://github.com/zhaohao19941221/hyperf-tt.git
+ *
+ *
+ */
+use Monolog\Formatter\LineFormatter;
+use Monolog\Handler\StreamHandler;
+use Monolog\Logger;
+
+/*
+ * This file is part of Hyperf.
+ *
+ * @see     https://www.hyperf.io
+ * @document https://hyperf.wiki
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 return [
     'default' => [
         'handler' => [
-            'class' => Monolog\Handler\RotatingFileHandler::class,
+            'class' => StreamHandler::class,
             'constructor' => [
-                'filename' => BASE_PATH . '/runtime/logs/hyperf.log',
-                'level' => Monolog\Logger::DEBUG,
+                'stream' => BASE_PATH . '/runtime/logs/hyperf.log',
+                'level' => Logger::DEBUG,
             ],
         ],
         'formatter' => [
-            'class' => Monolog\Formatter\LineFormatter::class,
+            'class' => LineFormatter::class,
             'constructor' => [
-                'format' => "[%datetime%] %channel%.%level_name%: %message%\n",
+                'format' => null,
                 'dateFormat' => 'Y-m-d H:i:s',
                 'allowInlineLineBreaks' => true,
             ],

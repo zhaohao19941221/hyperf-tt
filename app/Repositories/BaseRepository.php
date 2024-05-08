@@ -6,11 +6,17 @@ declare(strict_types=1);
  *
  * @link     https://github.com/zhaohao19941221/hyperf-tt
  * @document https://github.com/zhaohao19941221/hyperf-tt.git
+ *
+ *
  */
+
 namespace App\Repositories;
 
-use Hyperf\Di\Annotation\Inject;
+use Hyperf\Collection\Collection;
+use Hyperf\Tappable\HigherOrderTapProxy;
 use Psr\Container\ContainerInterface;
+
+use function Hyperf\Support\make;
 
 /**
  * 仓库基类
@@ -18,34 +24,26 @@ use Psr\Container\ContainerInterface;
  */
 class BaseRepository
 {
-    /**
-     * @var string
-     */
-    public $connection = 'default';
+    public string $connection = 'default';
 
-    /**
-     * @var
-     */
     public $model;
 
     /**
      * @Inject
-     * @var ContainerInterface
      */
-    protected $container;
+    protected ContainerInterface $container;
 
     /**
      * __get
      * 可以实现通过仓库类自定义隐式注入需要注入的服务类 暂时不用.
-     * @param $key
-     * @return ContainerInterface|void
+     * @param mixed $key
+     * @return ContainerInterface
      */
     public function __get($key)
     {
         switch ($key) {
             case 'app':
                 return $this->container;
-                break;
             default:
                 return $this->container;
         }
@@ -53,20 +51,17 @@ class BaseRepository
 
     /**
      * 不存在方法时的处理  适用于模型创建.
-     * @param $method
-     * @param $parameters
      * @return mixed
      */
-    public function __call($method, $parameters)
+    public function __call(mixed $method, mixed $parameters)
     {
         return make($this->model)->setConnection($this->connection)->getModel($this->model)->{$method}(...$parameters);
     }
 
     /**
      * 自定义链接.
-     * @param string $connection
      */
-    public function setConnection($connection = 'default'): BaseRepository
+    public function setConnection(string $connection = 'default'): BaseRepository
     {
         $this->connection = $connection;
         return $this;
@@ -74,7 +69,7 @@ class BaseRepository
 
     /**
      * 自定义模型.
-     * @param $model
+     * @param mixed $model
      * @return BaseRepository
      */
     public function setModel($model)
@@ -89,10 +84,10 @@ class BaseRepository
      * @param array|string[] $columnArr 查询字段
      * @param array $orderBy 排序
      */
-    public function getFirst(array $filter, array $columnArr = ['*'], $orderBy = []): array
+    public function getFirst(array $filter, array $columnArr = ['*'], array $orderBy = []): array
     {
         $qb = make($this->model)->setConnection($this->connection)->query();
-        $qb = queryFilter($filter, $qb)->select($columnArr);
+        $qb = query_filter($filter, $qb)->select($columnArr);
         if (! empty($orderBy)) {
             foreach ($orderBy as $col => $direction) {
                 $qb = $qb->orderBy($col, $direction);
@@ -113,14 +108,14 @@ class BaseRepository
     public function getList(array $filter, array $columnArr = ['*'], int $page = 1, int $pageSize = -1, array $orderBy = []): array
     {
         $qb = make($this->model)->setConnection($this->connection)->query();
-        $qb = queryFilter($filter, $qb)->select($columnArr);
+        $qb = query_filter($filter, $qb)->select($columnArr);
         if (! empty($orderBy)) {
             foreach ($orderBy as $col => $direction) {
                 $qb = $qb->orderBy($col, $direction);
             }
         }
         if ($page > 0 && $pageSize > 0) {
-            $qb = $qb->offset((($page - 1) * $pageSize))->limit($pageSize);
+            $qb = $qb->offset(($page - 1) * $pageSize)->limit($pageSize);
         }
         return $qb->get()->toArray();
     }
@@ -136,14 +131,14 @@ class BaseRepository
     public function lists(array $filter, array $columnArr = ['*'], int $page = 1, int $pageSize = -1, array $orderBy = []): array
     {
         $qb = make($this->model)->setConnection($this->connection)->query();
-        $qb = queryFilter($filter, $qb)->select($columnArr);
+        $qb = query_filter($filter, $qb)->select($columnArr);
         if (! empty($orderBy)) {
             foreach ($orderBy as $col => $direction) {
                 $qb = $qb->orderBy($col, $direction);
             }
         }
         if ($page > 0 && $pageSize > 0) {
-            $qb = $qb->offset((($page - 1) * $pageSize))->limit($pageSize);
+            $qb = $qb->offset(($page - 1) * $pageSize)->limit($pageSize);
         }
         $list = $qb->paginate($pageSize, $columnArr, '', $page)
             ->toArray();
@@ -164,14 +159,14 @@ class BaseRepository
     public function listsBuilder(array $filter, array $columnArr = ['*'], int $page = 1, int $pageSize = -1, array $orderBy = []): array
     {
         $qb = make($this->model)->setConnection($this->connection)->query();
-        $qb = queryBuilder($filter, $qb)->select($columnArr);
+        $qb = query_builder($filter, $qb)->select($columnArr);
         if (! empty($orderBy)) {
             foreach ($orderBy as $col => $direction) {
                 $qb = $qb->orderBy($col, $direction);
             }
         }
         if ($page > 0 && $pageSize > 0) {
-            $qb = $qb->offset((($page - 1) * $pageSize))->limit($pageSize);
+            $qb = $qb->offset(($page - 1) * $pageSize)->limit($pageSize);
         }
         $list = $qb->paginate($pageSize, $columnArr, '', $page)
             ->toArray();
@@ -189,14 +184,20 @@ class BaseRepository
      * @param int $pageSize 每页展示条数
      * @param array $orderBy 排序
      * @param array $data 原生语句
-     * @return array|\Hyperf\Database\Model\Builder[]|\Hyperf\Database\Model\Collection|\Hyperf\Database\Query\Builder[]|\Hyperf\Utils\Collection
+     * @return array|Collection|\Hyperf\Database\Model\Builder[]|\Hyperf\Database\Model\Collection|\Hyperf\Database\Query\Builder[]
+     */
+    /**
+     * @Created By: zhaohao
+     * @Created At: 2024/5/7 上午11:12
+     * @Desc:
+     * @return Collection|\Hyperf\Database\Model\Builder[]|\Hyperf\Database\Model\Collection|\Hyperf\Database\Query\Builder[]|mixed[]
      */
     public function getListRaw(array $filter, string $columns = '*', int $page = 1, int $pageSize = -1, array $orderBy = [], $data = [])
     {
         $qb = make($this->model)->setConnection($this->connection)->query();
-        $qb = queryFilter($filter, $qb);
+        $qb = query_filter($filter, $qb);
         if ($page > 0 && $pageSize > 0) {
-            $qb->offset((($page - 1) * $pageSize))->limit($pageSize);
+            $qb->offset(($page - 1) * $pageSize)->limit($pageSize);
         }
 
         if (! empty($orderBy)) {
@@ -213,12 +214,12 @@ class BaseRepository
      * @param array $filter 查询条件
      * @param string $column 查询字段
      * @param array $orderBy 排序
-     * @return \Hyperf\Utils\HigherOrderTapProxy|mixed|void
+     * @return HigherOrderTapProxy|mixed|void
      */
     public function getValue(array $filter, string $column = '*', array $orderBy = [])
     {
         $qb = make($this->model)->setConnection($this->connection)->query();
-        $qb = queryFilter($filter, $qb);
+        $qb = query_filter($filter, $qb);
         if (! empty($orderBy)) {
             foreach ($orderBy as $col => $direction) {
                 $qb = $qb->orderBy($col, $direction);
@@ -235,12 +236,12 @@ class BaseRepository
      * @param int $pageSize 每页展示条数
      * @param array $orderBy 排序
      */
-    public function getPluck(array $filter = [], string $columns = '*', int $page = 1, int $pageSize = -1, array $orderBy = []): \Hyperf\Utils\Collection
+    public function getPluck(array $filter = [], string $columns = '*', int $page = 1, int $pageSize = -1, array $orderBy = []): Collection
     {
         $qb = make($this->model)->setConnection($this->connection)->query();
-        $qb = queryFilter($filter, $qb);
+        $qb = query_filter($filter, $qb);
         if ($page > 0 && $pageSize > 0) {
-            $qb->offset((($page - 1) * $pageSize))->limit($pageSize);
+            $qb->offset(($page - 1) * $pageSize)->limit($pageSize);
         }
         if (! empty($orderBy)) {
             foreach ($orderBy as $col => $direction) {
@@ -257,7 +258,7 @@ class BaseRepository
     public function count(array $filter): int
     {
         $qb = make($this->model)->setConnection($this->connection)->query();
-        $qb = queryFilter($filter, $qb);
+        $qb = query_filter($filter, $qb);
         return $qb->count();
     }
 
@@ -267,19 +268,17 @@ class BaseRepository
      * @param string $column 字段
      * @return int|mixed
      */
-    public function sum(array $filter, string $column)
+    public function sum(array $filter, string $column): mixed
     {
         $qb = make($this->model)->setConnection($this->connection)->query();
-        $qb = queryFilter($filter, $qb);
+        $qb = query_filter($filter, $qb);
         return $qb->sum($column);
     }
 
     /**
      * 新增数据 不走model 修改器.
-     * @param false $getId
-     * @return mixed
      */
-    public function insert(array $data, $getId = false)
+    public function insert(array $data, bool $getId = false): mixed
     {
         if ($getId) {
             return make($this->model)->setConnection($this->connection)->insertGetId($data);
@@ -289,12 +288,10 @@ class BaseRepository
 
     /**
      * 走model修改器.
-     * @return mixed
      */
-    public function create(array $data)
+    public function create(array $data): mixed
     {
-        $qb = make($this->model)->setConnection($this->connection);
-        return $qb->create($data);
+        return make($this->model)->setConnection($this->connection)->create($data);
     }
 
     /**
@@ -305,7 +302,7 @@ class BaseRepository
     public function updateBy(array $filter, array $data): int
     {
         $qb = make($this->model)->setConnection($this->connection)->query();
-        $qb = queryFilter($filter, $qb);
+        $qb = query_filter($filter, $qb);
         return $qb->update($data);
     }
 
@@ -314,10 +311,10 @@ class BaseRepository
      * @param array $filter 条件
      * @return int|mixed
      */
-    public function deleteBy(array $filter)
+    public function deleteBy(array $filter): mixed
     {
         $qb = make($this->model)->setConnection($this->connection)->query();
-        $qb = queryFilter($filter, $qb);
+        $qb = query_filter($filter, $qb);
         return $qb->delete();
     }
 
@@ -325,12 +322,11 @@ class BaseRepository
      * 最大值
      * @param array $filter 条件
      * @param string $column 字段
-     * @return mixed
      */
-    public function max(array $filter, string $column)
+    public function max(array $filter, string $column): mixed
     {
         $qb = make($this->model)->setConnection($this->connection)->query();
-        $qb = queryFilter($filter, $qb);
+        $qb = query_filter($filter, $qb);
         return $qb->max($column);
     }
 }

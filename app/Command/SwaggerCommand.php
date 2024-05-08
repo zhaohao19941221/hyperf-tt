@@ -6,7 +6,10 @@ declare(strict_types=1);
  *
  * @link     https://github.com/zhaohao19941221/hyperf-tt
  * @document https://github.com/zhaohao19941221/hyperf-tt.git
+ *
+ *
  */
+
 namespace App\Command;
 
 use Hyperf\Command\Annotation\Command;
@@ -16,49 +19,44 @@ use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
-/**
- * @Command
- */
+#[Command]
 class SwaggerCommand extends HyperfCommand
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected ContainerInterface $container;
 
     // 表注释对应
-    protected $swaggerTable;
+    protected mixed $swaggerTable;
 
     // 请求方式
-    protected $swaggerMethod;
+    protected mixed $swaggerMethod;
 
     // url路径
-    protected $swaggerPath;
+    protected mixed $swaggerPath;
 
     // 标签
-    protected $swaggerTag;
+    protected mixed $swaggerTag;
 
     // 概要
-    protected $swaggerSummary;
+    protected mixed $swaggerSummary;
 
     // 描述
-    protected $swaggerDescription;
+    protected mixed $swaggerDescription;
 
     // query格式数据
-    protected $swaggerQuery;
+    protected mixed $swaggerQuery;
 
     // 请求 json 数据类型
-    protected $swaggerRequestBody;
+    protected mixed $swaggerRequestBody;
 
     // 响应 json 数据类型
-    protected $swaggerResponse;
+    protected mixed $swaggerResponse;
 
     /**
      * 执行的命令行.
      *
-     * @var string
+     * @var ?string
      */
-    protected $name = 'swagger:format';
+    protected ?string $name = 'swagger:format';
 
     public function __construct(ContainerInterface $container)
     {
@@ -66,7 +64,12 @@ class SwaggerCommand extends HyperfCommand
         parent::__construct();
     }
 
-    public function configure()
+    /**
+     * @Created By: zhaohao
+     * @Created At: 2024/5/7 下午3:18
+     * @Desc:配置
+     */
+    public function configure(): void
     {
         parent::configure();
         $this->setHelp('示例：php bin/hyperf.php swagger:format Post \'{"errcode":0,"errmsg":"success","data":{"token":"666"}}\'');
@@ -82,7 +85,12 @@ class SwaggerCommand extends HyperfCommand
         $this->addOption('request', 'R', InputOption::VALUE_OPTIONAL, '请求 json 数据类型');
     }
 
-    public function handle()
+    /**
+     * @Created By: zhaohao
+     * @Created At: 2024/5/7 下午3:18
+     * @Desc:handle
+     */
+    public function handle(): void
     {
         $this->swaggerTable = $this->input->getArgument('table');
         $this->swaggerMethod = ucfirst(strtolower($this->input->getArgument('method')));
@@ -97,9 +105,11 @@ class SwaggerCommand extends HyperfCommand
     }
 
     /**
-     * 获取 swagger 结构.
+     * @Created By: zhaohao
+     * @Created At: 2024/5/7 下午3:18
+     * @Desc:获取 swagger 结构.
      */
-    public function getSwaggerModel()
+    public function getSwaggerModel(): string
     {
         $doc = PHP_EOL . PHP_EOL;
         $header = $this->swaggerPath . $this->swaggerTag . $this->swaggerSummary . $this->swaggerDescription;
@@ -124,7 +134,9 @@ eof;
     }
 
     /**
-     * 获取路径数据.
+     * @Created By: zhaohao
+     * @Created At: 2024/5/7 下午3:19
+     * @Desc:获取路径数据
      * @param null|string $path 路径
      */
     public function getSwaggerPath(?string $path): string
@@ -137,7 +149,9 @@ eof;
     }
 
     /**
-     * 获取标签数据.
+     * @Created By: zhaohao
+     * @Created At: 2024/5/7 下午3:19
+     * @Desc:获取标签数据
      * @param null|string $tag 标签
      */
     public function getSwaggerTag(?string $tag): string
@@ -150,7 +164,9 @@ eof;
     }
 
     /**
-     * 获取概要数据.
+     * @Created By: zhaohao
+     * @Created At: 2024/5/7 下午3:19
+     * @Desc:获取概要数据
      * @param null|string $summary 概要
      * @return string 概要格式数据
      */
@@ -178,7 +194,9 @@ eof;
     }
 
     /**
-     * query 参数拼接.
+     * @Created By: zhaohao
+     * @Created At: 2024/5/7 下午3:20
+     * @Desc:query 参数拼接.
      */
     public function getSwaggerParameter(?string $parameter): string
     {
@@ -206,7 +224,9 @@ eof;
     }
 
     /**
-     * 获取请求 JsonContent 数据.
+     * @Created By: zhaohao
+     * @Created At: 2024/5/7 下午3:20
+     * @Desc:获取请求 JsonContent 数据.
      */
     public function getSwaggerRequestBody(?string $requestBody): string
     {
@@ -227,6 +247,9 @@ eof;
     }
 
     /**
+     * @Created By: zhaohao
+     * @Created At: 2024/5/7 下午3:21
+     * @Desc:
      * 获取响应 JsonContent 数据.
      * @param null|string $response 响应json
      */
@@ -260,18 +283,18 @@ eof;
     }
 
     /**
-     * 检测是否为有序数据.
-     * @param mixed $array
+     * @Created By: zhaohao
+     * @Created At: 2024/5/7 下午3:21
+     * @Desc:检测是否为有序数据
      * @return string array 有序数据 object 无序数组
      */
-    public function checkIsArray($array): string
+    public function checkIsArray(mixed $array): string
     {
         if (! is_array($array)) {
             return 'string';
         }
-        $num = count($array);
-        for ($i = 0; $i < $num; ++$i) {
-            if (isset($array[$i])) {
+        foreach ($array as $i => $iValue) {
+            if (isset($iValue)) {
                 continue;
             }
             return 'object';
@@ -287,7 +310,7 @@ eof;
      * @param string $propertyType 数据格式
      * @return string JsonContent格式数据
      */
-    private function constructSwaggerDoc($data, array $comment = [], string $placeholder = '', string $propertyType = 'Property'): string
+    private function constructSwaggerDoc(array|string $data, array $comment = [], string $placeholder = '', string $propertyType = 'Property'): string
     {
         if (! $data) {
             return <<<'eof'
@@ -334,22 +357,15 @@ eof;
                     $newPlaceholder = $placeholder . '    ';
                     $doc .= $this->constructSwaggerDoc($v, $comment, $newPlaceholder);
                 }
-                if (isset($v[0]) || empty($v)) {
-                    $doc .= <<<eof
+                $doc .= <<<eof
      *             {$placeholder}),
 eof;
-                } else {
-                    $doc .= <<<eof
-     *             {$placeholder}),
-eof;
-                }
-                $doc .= PHP_EOL;
             } else {
                 $doc .= <<<eof
      *             {$placeholder}@OA\\Property(property="{$k}", type="{$type}", description="{$description}"),
 eof;
-                $doc .= PHP_EOL;
             }
+            $doc .= PHP_EOL;
         }
         if ($propertyType == 'Items') {
             $placeholder = substr($placeholder, 0, -4);
@@ -366,25 +382,15 @@ eof;
 
     /**
      * 获取数据类型.
-     * @param $value
      */
-    private function gettype($value): string
+    private function gettype(mixed $value): string
     {
         $type = (string) gettype($value);
-        switch ($type) {
-            case 'array':
-                $result = $this->checkIsArray($value);
-                break;
-            case 'integer':
-            case 'boolean':
-            case 'string':
-                $result = $type;
-                break;
-            default:
-                $result = 'string';
-                break;
-        }
-        return $result;
+        return match ($type) {
+            'array' => $this->checkIsArray($value),
+            'integer', 'boolean', 'string' => $type,
+            default => 'string',
+        };
     }
 
     /**
@@ -398,7 +404,9 @@ eof;
     }
 
     /**
-     * 获取数据表字段描述.
+     * @Created By: zhaohao
+     * @Created At: 2024/5/7 下午3:23
+     * @Desc:获取数据表字段描述
      */
     private function getColumnComment(?string $tables): array
     {
@@ -424,7 +432,7 @@ eof;
                 // 判断  字段名 是否存在，存在的情况需要移除，并加入到 haveKey 数组
                 if (isset($list[$v['COLUMN_NAME']])) {
                     unset($list[$v['COLUMN_NAME']]);
-                    array_push($haveKey, $v['COLUMN_NAME']);
+                    $haveKey[] = $v['COLUMN_NAME'];
                 }
                 $list[$v['COLUMN_NAME']] = $v['column_comment'];
             }

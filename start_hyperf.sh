@@ -1,11 +1,12 @@
 #!/bin/bash
 
-cd $(dirname $0)
+# shellcheck disable=SC2046
+cd $(dirname "$0") || exit
 
 op=$1
 if [[ $op == "start" ]]; then
   exec php bin/hyperf.php start
 else
-  echo "invalid op"
+  echo "start hyperf-tt err"
   exit 1
 fi

@@ -6,20 +6,22 @@ declare(strict_types=1);
  *
  * @link     https://github.com/zhaohao19941221/hyperf-tt
  * @document https://github.com/zhaohao19941221/hyperf-tt.git
+ *
+ *
  */
+
 namespace HyperfTest\Cases;
 
-use HyperfTest\HttpTestCase;
+use Hyperf\Testing\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
-class ExampleTest extends HttpTestCase
+class ExampleTest extends TestCase
 {
     public function testExample()
     {
-        $this->assertTrue(true);
-        $this->assertTrue(is_array($this->get('/')));
+        $this->get('/')->assertOk()->assertSee('Hyperf');
     }
 }

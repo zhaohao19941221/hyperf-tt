@@ -9,14 +9,13 @@ declare(strict_types=1);
  *
  * @link     https://github.com/zhaohao19941221/hyperf-tt
  * @document https://github.com/zhaohao19941221/hyperf-tt.git
+ *
+ *
  */
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Di\Container;
 use Hyperf\Di\Definition\DefinitionSourceFactory;
-use Hyperf\Utils\ApplicationContext;
 
-$container = new Container((new DefinitionSourceFactory(true))());
+$container = new Container((new DefinitionSourceFactory())());
 
-if (! $container instanceof \Psr\Container\ContainerInterface) {
-    throw new RuntimeException('The dependency injection container is invalid.');
-}
 return ApplicationContext::setContainer($container);
